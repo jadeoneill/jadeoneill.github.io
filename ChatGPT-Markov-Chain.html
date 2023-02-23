@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Markov Chain Text Generator</title>
+</head>
+<body>
+  <h1>Markov Chain Text Generator</h1>
+  <label for="input-doc">Input document:</label>
+  <br>
+  <textarea id="input-doc" rows="10" cols="50"></textarea>
+  <br>
+  <button onclick="generateText()">Generate Text</button>
+  <br>
+  <label for="output-text">Generated text:</label>
+  <br>
+  <textarea id="output-text" rows="10" cols="50"></textarea>
+  <script>
+    function generateText() {
+      // Get input document text
+      var inputText = document.getElementById("input-doc").value;
+      
+      // Clean up input text by removing extra whitespace and newlines
+      inputText = inputText.replace(/\s+/g, " ").trim();
+      
+      // Split input text into an array of words
+      var words = inputText.split(" ");
+      
+      // Create Markov Chain object
+      var markovChain = {};
+      
+      // Loop through words and add them to the Markov Chain
+      for (var i = 0; i < words.length - 1; i++) {
+        var word = words[i];
+        var nextWord = words[i + 1];
+        if (markovChain[word]) {
+          markovChain[word].push(nextWord);
+        } else {
+          markovChain[word] = [nextWord];
+        }
+      }
+      
+      // Generate text using the Markov Chain
+      var outputText = "";
+      var currentWord = words[0];
+      for (var i = 0; i < 100; i++) {
+        outputText += currentWord + " ";
+        var possibleNextWords = markovChain[currentWord];
+        if (!possibleNextWords) {
+          possibleNextWords = markovChain[Object.keys(markovChain)[Math.floor(Math.random() * Object.keys(markovChain).length)]];
+        }
+        currentWord = possibleNextWords[Math.floor(Math.random() * possibleNextWords.length)];
+      }
+      
+      // Update output text area
+      document.getElementById("output-text").value = outputText;
+    }
+  </script>
+</body>
+</html>
